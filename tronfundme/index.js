@@ -62,8 +62,35 @@ app.post('/api/getUserAddress', (req, res) => {
   
 });
 
+app.get('/api/getUserCount', (req, res) => {
+  var sql = "SELECT COUNT(*) AS count FROM UserModel";
+
+  con.query(sql, (error, results, fields) => {
+    if(error)
+    {
+      return console.error(error.message);
+    }
+    res.json(results[0].count);
+  })
+})
+
+app.get('/api/getCampaignCount', (req, res) => {
+  var sql = "SELECT COUNT(*) AS count FROM campaignModel";
+
+  con.query(sql, (error, results, fields) => {
+    if(error)
+    {
+      return console.error(error.message);
+    }
+    res.json(results[0].count);
+  })
+})
+
+
 app.post('/api/getUserDetails', (req, res) => {
   var sql = "SELECT * FROM UserModel WHERE username = ?";
+
+  console.log("Username: " + req.body.username);
 
   con.query(sql, [req.body.username], (error, results, fields) => {
     if(error)
@@ -93,11 +120,50 @@ app.post('/api/updateUserDetails', (req, res) => {
   })
 })
 
+app.post('/api/registerUser', (req, res) => {
+  var sql = "INSERT INTO usermodel (id, username, address, donatedTRX, donatedGST, campaignsFollowed, country) VALUES (NULL, ?, ?, '0', '0', '0', ?);";
+
+  console.log("Username value: " + req.body.username);
+  console.log("User address: " + req.body.address);
+  console.log("User country: " + req.body.country);
+
+  con.query(sql, [req.body.username, req.body.address, req.body.country], (error, results, fields) => {
+    if(error)
+    {
+      res.sendStatus(400);
+      return console.error(error.message);
+    }
+    console.log("Update details: " + results);
+    res.sendStatus(200);
+  })
+})
+
 app.post('/api/updateCampaign', (req, res) => {
 
-  var sql = "UPDATE campaignmodel followersCount  = ?, fundCollected = ?, deployed = ? WHERE id = ?;";
+  console.log("Follower's count: " + req.body.followersCount);
+  console.log("Fund collected: " + req.body.fundCollected);
+  console.log("Deployed: " + req.body.deployed);
+  console.log("ID: " + req.body.id);
 
-  con.query(sql, [req.body.followersCount, req.body.fundCollected, req.body.deployed, req.body.id], (error, results, fields) => {
+  var sql = "UPDATE campaignmodel SET followersCount  = ?, fundCollected = ?, deployed = ? WHERE id = ?;";
+
+  con.query(sql, [req.body.followersCount, req.body.fundCollectedLatest, req.body.deployed, req.body.id], (error, results, fields) => {
+    if(error)
+    {
+      res.sendStatus(400);
+      return console.error(error.message);
+    }
+    console.log("Update details: " + results);
+    res.sendStatus(200);
+  })
+})
+
+
+app.post('/api/updateUser', (req, res) => {
+
+  var sql = "UPDATE usermodel SET donatedTRX  = ?, donatedGST = ?, campaignsFollowed = ? WHERE username = ?;";
+
+  con.query(sql, [req.body.donatedTRX, req.body.donatedGST, req.body.campaignFollowed, req.body.username], (error, results, fields) => {
     if(error)
     {
       res.sendStatus(400);
