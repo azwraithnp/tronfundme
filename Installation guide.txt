@@ -1,0 +1,6 @@
+-NodeJS should be installed on the machine to run this app
+-PHP/mySQL should be installed on the machine to run this app
+-Import tronfundme.sql database into your phpmyadmin or mysql server
+-Create user called 'admin' with password 'admin'.
+-Install node modules in this directory and in client directory by using 'npm install' command
+-Run command 'npm run dev' from this directory to launch both client website and node server
